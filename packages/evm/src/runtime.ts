@@ -8,16 +8,21 @@ export type EvmClients = {
   walletClient: ReturnType<typeof createWalletClient>;
 };
 
+export type Eip1193Provider = {
+  request: (args: { method: string; params?: unknown[] | Record<string, unknown> }) => Promise<unknown>;
+};
+
 export type CreateEvmRuntimeOptions = {
   chain: Chain;
   rpcUrl: string;
-  /** Wallet transport. For Node, you can pass a private-key Account via viem directly later; for now we support EIP-1193. */
-  eip1193Provider?: any;
+  /** EIP-1193 provider (MetaMask, Coinbase Wallet, etc.) */
+  eip1193Provider?: Eip1193Provider;
+  /** Optional viem Account (e.g. privateKeyToAccount) for server-side execution. */
   account?: Account;
 };
 
 export function createEvmClients(opts: CreateEvmRuntimeOptions): EvmClients {
-  const transport: Transport = opts.rpcUrl ? http(opts.rpcUrl) : custom(opts.eip1193Provider);
+  const transport: Transport = opts.rpcUrl ? http(opts.rpcUrl) : custom(opts.eip1193Provider!);
 
   const publicClient = createPublicClient({ chain: opts.chain, transport });
 
@@ -56,7 +61,7 @@ export function createEvmExecutor(clients: EvmClients): Executor {
   async function executeTx(step: PlanStep): Promise<{ txHash: Hex }> {
     if (!clients.walletClient.account) {
       throw new Error(
-        "No wallet account configured for executor. Provide `account` (private key) or an EIP-1193 provider in createEvmClients()."
+        "No wallet account configured for executor. Provide `account` (private key) in createEvmClients(), or use createEip1193Executor() for browser wallets."
       );
     }
 
@@ -69,6 +74,26 @@ export function createEvmExecutor(clients: EvmClients): Executor {
     });
 
     return { txHash: hash as Hex };
+  }
+
+  return { executeTx };
+}
+
+export function createEip1193Executor(provider: Eip1193Provider): Executor {
+  async function executeTx(step: PlanStep): Promise<{ txHash: Hex }> {
+    const accounts = (await provider.request({ method: "eth_requestAccounts" })) as string[];
+    const from = accounts?.[0];
+    if (!from) throw new Error("No account available from EIP-1193 provider.");
+
+    const tx = {
+      from,
+      to: step.tx.to,
+      data: step.tx.data,
+      value: step.tx.value ? (`0x${step.tx.value.toString(16)}` as const) : undefined
+    };
+
+    const hash = (await provider.request({ method: "eth_sendTransaction", params: [tx] })) as Hex;
+    return { txHash: hash };
   }
 
   return { executeTx };

@@ -91,8 +91,10 @@ function createGuardrail(opts) {
     const unscored = await opts.planner.plan({ chainId, action, params });
     const steps = await Promise.all(
       unscored.steps.map(async (s) => {
-        const simulation = await opts.simulator.simulateTx(s, chainId);
-        return { ...s, simulation };
+        const analyzed = opts.riskAnalyzer ? await opts.riskAnalyzer.analyzeStep(s, chainId) : [];
+        const riskFlags = [...s.riskFlags ?? [], ...analyzed];
+        const simulation = await opts.simulator.simulateTx({ ...s, riskFlags }, chainId);
+        return { ...s, riskFlags, simulation };
       })
     );
     const withoutPolicy = { ...unscored, steps };

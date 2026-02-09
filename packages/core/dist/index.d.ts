@@ -69,6 +69,9 @@ type Approver = {
     /** Return true to approve execution. */
     approve(req: ApproverRequest): Promise<boolean>;
 };
+type RiskAnalyzer = {
+    analyzeStep(step: PlanStep, chainId: ChainId): Promise<RiskFlag[]>;
+};
 type Simulator = {
     simulateTx(step: PlanStep, chainId: ChainId): Promise<TxSimulation>;
 };
@@ -115,9 +118,10 @@ type CreateGuardrailOptions = {
     simulator: Simulator;
     executor: Executor;
     policy: PolicyEngine;
+    riskAnalyzer?: RiskAnalyzer;
     audit?: AuditWriter;
     approver?: Approver;
 };
 declare function createGuardrail(opts: CreateGuardrailOptions): GuardrailSDK;
 
-export { type Address, type Approver, type ApproverRequest, type AuditWriter, type Bigintish, type ChainId, type CreateGuardrailOptions, type Executor, type Explain, type FileAuditOptions, type GuardrailSDK, type Hex, type Plan, type PlanStep, type Planner, type Policy, type PolicyDecision, type PolicyEngine, PolicySchema, type RiskFlag, type Severity, type Simulator, type TxRequest, type TxSimulation, createGuardrail, createPolicyEngine, fileAudit };
+export { type Address, type Approver, type ApproverRequest, type AuditWriter, type Bigintish, type ChainId, type CreateGuardrailOptions, type Executor, type Explain, type FileAuditOptions, type GuardrailSDK, type Hex, type Plan, type PlanStep, type Planner, type Policy, type PolicyDecision, type PolicyEngine, PolicySchema, type RiskAnalyzer, type RiskFlag, type Severity, type Simulator, type TxRequest, type TxSimulation, createGuardrail, createPolicyEngine, fileAudit };

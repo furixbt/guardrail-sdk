@@ -83,6 +83,10 @@ export type Approver = {
   approve(req: ApproverRequest): Promise<boolean>;
 };
 
+export type RiskAnalyzer = {
+  analyzeStep(step: PlanStep, chainId: ChainId): Promise<RiskFlag[]>;
+};
+
 export type Simulator = {
   simulateTx(step: PlanStep, chainId: ChainId): Promise<TxSimulation>;
 };

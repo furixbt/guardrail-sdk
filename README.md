@@ -38,6 +38,7 @@ const sdk = createGuardrail({
   planner: createActionPlanner({ chainId }),
   simulator: createEvmSimulator(clients),
   executor: createEvmExecutor(clients),
+  riskAnalyzer: (await import("@guardrail/evm")).createEvmRiskAnalyzer(),
   policy: createPolicyEngine({
     noInfiniteApprovals: true,
     // optional: allow only known contracts
@@ -63,17 +64,21 @@ console.log(plan.policy);
 Use the wallet’s injected provider (MetaMask, Coinbase Wallet, etc.):
 
 ```ts
-import { createEvmClients, createEvmExecutor, createEvmSimulator } from "@guardrail/evm";
+import { createEip1193Executor, createEvmClients, createEvmSimulator, createEvmRiskAnalyzer } from "@guardrail/evm";
 import { base } from "viem/chains";
+
+const provider = window.ethereum;
 
 const clients = createEvmClients({
   chain: base,
   rpcUrl: "https://mainnet.base.org", // fallback
-  eip1193Provider: window.ethereum
+  eip1193Provider: provider
 });
 
-// executor requires an account; v0.1 expects an explicit account.
-// Next: we’ll add a dedicated EIP-1193 executor wrapper.
+const executor = createEip1193Executor(provider);
+const riskAnalyzer = createEvmRiskAnalyzer();
+
+// Use with createGuardrail({ executor, simulator: createEvmSimulator(clients), riskAnalyzer, ... })
 ```
 
 ## Dev

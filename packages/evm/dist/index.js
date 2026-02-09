@@ -91,7 +91,7 @@ function createEvmExecutor(clients) {
   async function executeTx(step) {
     if (!clients.walletClient.account) {
       throw new Error(
-        "No wallet account configured for executor. Provide `account` (private key) or an EIP-1193 provider in createEvmClients()."
+        "No wallet account configured for executor. Provide `account` (private key) in createEvmClients(), or use createEip1193Executor() for browser wallets."
       );
     }
     const hash = await clients.walletClient.sendTransaction({
@@ -105,10 +105,39 @@ function createEvmExecutor(clients) {
   }
   return { executeTx };
 }
+function createEip1193Executor(provider) {
+  async function executeTx(step) {
+    const accounts = await provider.request({ method: "eth_requestAccounts" });
+    const from = accounts?.[0];
+    if (!from) throw new Error("No account available from EIP-1193 provider.");
+    const tx = {
+      from,
+      to: step.tx.to,
+      data: step.tx.data,
+      value: step.tx.value ? `0x${step.tx.value.toString(16)}` : void 0
+    };
+    const hash = await provider.request({ method: "eth_sendTransaction", params: [tx] });
+    return { txHash: hash };
+  }
+  return { executeTx };
+}
+
+// src/risk.ts
+function createEvmRiskAnalyzer(opts = {}) {
+  const approvals = opts.approvals ?? true;
+  async function analyzeStep(step) {
+    if (!approvals) return [];
+    if (step.kind !== "tx") return [];
+    return detectApprovalRisks({ to: step.tx.to, data: step.tx.data });
+  }
+  return { analyzeStep };
+}
 export {
   PERMIT2_ADDRESS,
+  createEip1193Executor,
   createEvmClients,
   createEvmExecutor,
+  createEvmRiskAnalyzer,
   createEvmSimulator,
   detectApprovalRisks,
   isRevertErrorMessage,

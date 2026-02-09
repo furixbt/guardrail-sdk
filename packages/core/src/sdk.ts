@@ -1,4 +1,4 @@
-import type { Approver, AuditWriter, Executor, Plan, Planner, PolicyEngine, Simulator } from "./types";
+import type { Approver, AuditWriter, Executor, Plan, Planner, PolicyEngine, RiskAnalyzer, Simulator } from "./types";
 
 export type GuardrailSDK = {
   plan(action: string, params: Record<string, unknown>): Promise<Plan>;
@@ -11,6 +11,7 @@ export type CreateGuardrailOptions = {
   simulator: Simulator;
   executor: Executor;
   policy: PolicyEngine;
+  riskAnalyzer?: RiskAnalyzer;
   audit?: AuditWriter;
   approver?: Approver;
 };
@@ -21,11 +22,14 @@ export function createGuardrail(opts: CreateGuardrailOptions): GuardrailSDK {
   async function plan(action: string, params: Record<string, unknown>): Promise<Plan> {
     const unscored = await opts.planner.plan({ chainId, action, params });
 
-    // simulate each step
+    // analyze risks (best-effort) + simulate each step
     const steps = await Promise.all(
       unscored.steps.map(async (s) => {
-        const simulation = await opts.simulator.simulateTx(s, chainId);
-        return { ...s, simulation };
+        const analyzed = opts.riskAnalyzer ? await opts.riskAnalyzer.analyzeStep(s, chainId) : [];
+        const riskFlags = [...(s.riskFlags ?? []), ...analyzed];
+
+        const simulation = await opts.simulator.simulateTx({ ...s, riskFlags }, chainId);
+        return { ...s, riskFlags, simulation };
       })
     );
 
