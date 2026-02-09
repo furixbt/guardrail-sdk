@@ -1,0 +1,17 @@
+{
+  "name": "guardrail-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo 'demo: no build'",
+    "lint": "eslint . --max-warnings=0",
+    "test": "node --test",
+    "clean": "rm -rf .cache"
+  },
+  "dependencies": {
+    "@guardrail/core": "0.1.0",
+    "@guardrail/evm": "0.1.0",
+    "@guardrail/actions": "0.1.0",
+    "viem": "^2.37.5"
+  }
+}
