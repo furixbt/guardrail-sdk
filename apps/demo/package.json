@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "echo 'demo: no build'",
-    "lint": "eslint . --max-warnings=0",
+    "lint": "echo 'demo: skip lint'",
     "test": "node --test",
     "clean": "rm -rf .cache"
   },

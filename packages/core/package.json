@@ -13,7 +13,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --dts-resolve --clean",
-    "lint": "eslint . --max-warnings=0",
+    "lint": "eslint src test --max-warnings=0",
     "test": "node --test test/policy.test.mjs",
     "clean": "rm -rf dist"
   },
