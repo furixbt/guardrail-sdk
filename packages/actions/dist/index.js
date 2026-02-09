@@ -59,9 +59,10 @@ function createActionPlanner(opts) {
         tx: { to: p.token, data },
         explain: topExplain
       });
-    } else if (input.action === "swap.raw") {
+    } else if (input.action === "swap.raw" || input.action === "swap.uniswap.universalRouterRaw") {
       const p = input.params;
-      topExplain = explain("Swap (raw calldata)", p.summary ?? "Swap via router", [`Router: ${p.router}`]);
+      const title = input.action === "swap.raw" ? "Swap (raw calldata)" : "Uniswap Swap (Universal Router)";
+      topExplain = explain(title, p.summary ?? "Swap via router", [`Router: ${p.router}`]);
       steps.push({
         kind: "tx",
         tx: { to: p.router, data: p.data, value: p.valueWei ? BigInt(p.valueWei) : void 0 },
@@ -85,15 +86,22 @@ function createActionPlanner(opts) {
 // src/ops.ts
 var ops_exports = {};
 __export(ops_exports, {
+  approveExact: () => approveExact,
   erc20Approve: () => erc20Approve,
   erc20Transfer: () => erc20Transfer,
   swapRaw: () => swapRaw,
+  swapUniswapUniversalRouterRaw: () => swapUniswapUniversalRouterRaw,
   transfer: () => transfer
 });
 var transfer = (p) => ({ action: "transfer.native", params: p });
 var erc20Approve = (p) => ({ action: "erc20.approve", params: p });
+var approveExact = erc20Approve;
 var erc20Transfer = (p) => ({ action: "erc20.transfer", params: p });
 var swapRaw = (p) => ({ action: "swap.raw", params: p });
+var swapUniswapUniversalRouterRaw = (p) => ({
+  action: "swap.uniswap.universalRouterRaw",
+  params: p
+});
 export {
   ops_exports as actions,
   createActionPlanner

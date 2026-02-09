@@ -63,9 +63,10 @@ export function createActionPlanner(opts: GuardrailActionPlannerOptions): Planne
         tx: { to: p.token, data },
         explain: topExplain
       });
-    } else if (input.action === "swap.raw") {
+    } else if (input.action === "swap.raw" || input.action === "swap.uniswap.universalRouterRaw") {
       const p = input.params as any;
-      topExplain = explain("Swap (raw calldata)", p.summary ?? "Swap via router", [`Router: ${p.router}`]);
+      const title = input.action === "swap.raw" ? "Swap (raw calldata)" : "Uniswap Swap (Universal Router)";
+      topExplain = explain(title, p.summary ?? "Swap via router", [`Router: ${p.router}`]);
       steps.push({
         kind: "tx",
         tx: { to: p.router, data: p.data, value: p.valueWei ? BigInt(p.valueWei) : undefined },

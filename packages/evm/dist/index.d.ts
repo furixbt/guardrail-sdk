@@ -16,6 +16,7 @@ declare function createEvmClients(opts: CreateEvmRuntimeOptions): EvmClients;
 declare function createEvmSimulator(clients: EvmClients): Simulator;
 declare function createEvmExecutor(clients: EvmClients): Executor;
 
+declare const PERMIT2_ADDRESS: "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 declare function normalizeAddress(a: string): Address;
 declare function detectApprovalRisks(input: {
     to: Address;
@@ -24,4 +25,4 @@ declare function detectApprovalRisks(input: {
 declare function isRevertErrorMessage(err: unknown): string;
 declare function safeHexToBigInt(hex?: Hex): bigint | undefined;
 
-export { type CreateEvmRuntimeOptions, type EvmClients, createEvmClients, createEvmExecutor, createEvmSimulator, detectApprovalRisks, isRevertErrorMessage, normalizeAddress, safeHexToBigInt };
+export { type CreateEvmRuntimeOptions, type EvmClients, PERMIT2_ADDRESS, createEvmClients, createEvmExecutor, createEvmSimulator, detectApprovalRisks, isRevertErrorMessage, normalizeAddress, safeHexToBigInt };

@@ -4,6 +4,7 @@ import { createPublicClient, createWalletClient, custom, http } from "viem";
 // src/utils.ts
 import { decodeFunctionData, erc20Abi, getAddress, hexToBigInt } from "viem";
 var UINT256_MAX = (1n << 256n) - 1n;
+var PERMIT2_ADDRESS = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 function normalizeAddress(a) {
   return getAddress(a);
 }
@@ -12,28 +13,32 @@ function detectApprovalRisks(input) {
   try {
     const decoded = decodeFunctionData({ abi: erc20Abi, data: input.data });
     if (decoded.functionName !== "approve") return [];
-    const [, amount] = decoded.args;
+    const [spender, amount] = decoded.args;
+    const flags = [];
     if (amount === UINT256_MAX) {
-      return [
-        {
-          code: "evm.approval.infinite",
-          severity: "high",
-          message: "This transaction sets an infinite ERC-20 allowance (UINT256_MAX).",
-          data: { contract: input.to, amount: amount.toString() }
-        }
-      ];
+      flags.push({
+        code: "evm.approval.infinite",
+        severity: "high",
+        message: "This transaction sets an infinite ERC-20 allowance (UINT256_MAX).",
+        data: { contract: input.to, spender, amount: amount.toString() }
+      });
+    } else if (amount > 10n ** 30n) {
+      flags.push({
+        code: "evm.approval.large",
+        severity: "medium",
+        message: "This transaction sets a very large ERC-20 allowance.",
+        data: { contract: input.to, spender, amount: amount.toString() }
+      });
     }
-    if (amount > 10n ** 30n) {
-      return [
-        {
-          code: "evm.approval.large",
-          severity: "medium",
-          message: "This transaction sets a very large ERC-20 allowance.",
-          data: { contract: input.to, amount: amount.toString() }
-        }
-      ];
+    if (spender.toLowerCase() === PERMIT2_ADDRESS.toLowerCase()) {
+      flags.push({
+        code: "evm.approval.permit2",
+        severity: "medium",
+        message: "This approval targets Permit2. This is common (Uniswap), but review carefully.",
+        data: { contract: input.to, spender }
+      });
     }
-    return [];
+    return flags;
   } catch {
     return [];
   }
@@ -101,6 +106,7 @@ function createEvmExecutor(clients) {
   return { executeTx };
 }
 export {
+  PERMIT2_ADDRESS,
   createEvmClients,
   createEvmExecutor,
   createEvmSimulator,
