@@ -1,6 +1,6 @@
 {
   "name": "@guardrail-sdk/ui-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publishConfig": {
     "access": "public"
   },
@@ -13,7 +13,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --dts-resolve",
     "lint": "eslint src --max-warnings=0",
@@ -24,6 +26,6 @@
     "react": ">=18"
   },
   "dependencies": {
-    "@guardrail-sdk/core": "0.1.0"
+    "@guardrail-sdk/core": "0.1.1"
   }
 }
