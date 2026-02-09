@@ -7,7 +7,7 @@ var __export = (target, all) => {
 // src/planner.ts
 import { randomUUID } from "crypto";
 import { encodeFunctionData, erc20Abi } from "viem";
-import { detectApprovalRisks } from "@guardrail/evm";
+import { detectApprovalRisks } from "@guardrail-sdk/evm";
 function explain(title, summary, bullets) {
   return { title, summary, bullets };
 }

@@ -1,4 +1,4 @@
-import { Executor, Simulator, Address, Hex, RiskFlag, RiskAnalyzer } from '@guardrail/core';
+import { Executor, Simulator, Address, Hex, RiskFlag, RiskAnalyzer } from '@guardrail-sdk/core';
 import { Chain, Account, createPublicClient, createWalletClient } from 'viem';
 
 type EvmClients = {

@@ -1,4 +1,4 @@
-import type { Executor, Hex, PlanStep, Simulator, TxSimulation } from "@guardrail/core";
+import type { Executor, Hex, PlanStep, Simulator, TxSimulation } from "@guardrail-sdk/core";
 import { createPublicClient, createWalletClient, custom, http, type Account, type Chain, type Transport } from "viem";
 
 import { isRevertErrorMessage } from "./utils";

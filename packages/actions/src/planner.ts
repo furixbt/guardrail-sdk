@@ -1,8 +1,8 @@
-import type { Explain, Hex, Planner, PlanStep, RiskFlag } from "@guardrail/core";
+import type { Explain, Hex, Planner, PlanStep, RiskFlag } from "@guardrail-sdk/core";
 import { randomUUID } from "node:crypto";
 import { encodeFunctionData, erc20Abi } from "viem";
 
-import { detectApprovalRisks } from "@guardrail/evm";
+import { detectApprovalRisks } from "@guardrail-sdk/evm";
 
 function explain(title: string, summary: string, bullets?: string[]): Explain {
   return { title, summary, bullets };

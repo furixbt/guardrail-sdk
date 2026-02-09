@@ -1,4 +1,4 @@
-import type { Address, Hex } from "@guardrail/core";
+import type { Address, Hex } from "@guardrail-sdk/core";
 
 export type TransferParams = {
   to: Address;

@@ -16,10 +16,10 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@guardrail/core": ["packages/core/src/index.ts"],
-      "@guardrail/evm": ["packages/evm/src/index.ts"],
-      "@guardrail/actions": ["packages/actions/src/index.ts"],
-      "@guardrail/ui-react": ["packages/ui-react/src/index.ts"]
+      "@guardrail-sdk/core": ["packages/core/src/index.ts"],
+      "@guardrail-sdk/evm": ["packages/evm/src/index.ts"],
+      "@guardrail-sdk/actions": ["packages/actions/src/index.ts"],
+      "@guardrail-sdk/ui-react": ["packages/ui-react/src/index.ts"]
     }
   }
 }

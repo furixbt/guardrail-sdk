@@ -1,4 +1,4 @@
-import { Planner, Address, Hex } from '@guardrail/core';
+import { Planner, Address, Hex } from '@guardrail-sdk/core';
 
 type GuardrailActionPlannerOptions = {
     chainId: number;

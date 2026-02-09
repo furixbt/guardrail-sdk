@@ -1,4 +1,4 @@
-import type { PlanStep, RiskAnalyzer, RiskFlag } from "@guardrail/core";
+import type { PlanStep, RiskAnalyzer, RiskFlag } from "@guardrail-sdk/core";
 
 import { detectApprovalRisks } from "./utils";
 

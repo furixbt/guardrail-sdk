@@ -1,1 +1,1 @@
-export { Plan, RiskFlag } from '@guardrail/core';
+export { Plan, RiskFlag } from '@guardrail-sdk/core';

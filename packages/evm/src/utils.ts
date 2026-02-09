@@ -1,4 +1,4 @@
-import type { Address, Hex, RiskFlag } from "@guardrail/core";
+import type { Address, Hex, RiskFlag } from "@guardrail-sdk/core";
 import { decodeFunctionData, erc20Abi, getAddress, hexToBigInt } from "viem";
 
 const UINT256_MAX = (1n << 256n) - 1n;
